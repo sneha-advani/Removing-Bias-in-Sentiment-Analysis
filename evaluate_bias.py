@@ -15,7 +15,7 @@ def convertFileToList(file):
     with open(file, 'r') as f:
         text = f.read().strip().split('\n')
         for line in text:
-        	predictions.append(line)
+            predictions.append(float(line))
 
     return predictions
 
@@ -29,6 +29,6 @@ def main(args):
     print("P Value: " + str(pval))
 
 if __name__ == '__main__':
-	args = parser.parse_args()
+    args = parser.parse_args()
     pp.pprint(args)
     main(args)
