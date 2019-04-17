@@ -34,7 +34,7 @@ def extractData(inputeecfile, gender, race):
             thisGender = line_split[4].strip()
             thisRace = line_split[5].strip()
             if (race == None or thisRace.lower() == race.lower()) and (gender == None or gender.lower() == thisGender.lower()):
-                extractions.append(line)
+                extractions.append(line_split[0].strip() + "\t" + line_split[1].strip())
 
     return extractions
 
