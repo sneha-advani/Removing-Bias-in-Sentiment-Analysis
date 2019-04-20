@@ -119,7 +119,7 @@ def evaluate_ei(pred,gold):
 
         header=True        
         for line in gold_lines:
-            #line=line.decode('utf-8')
+            line=line.decode('utf-8')
             
             if header:
                 header=False

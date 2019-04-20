@@ -16,7 +16,7 @@ def convertFileToList(file):
         text = f.read().strip().split('\n')
         for line in text:
             predictions.append(float(line))
-
+    print(predictions)
     return predictions
 
 def main(args):

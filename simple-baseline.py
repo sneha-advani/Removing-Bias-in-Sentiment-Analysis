@@ -33,7 +33,7 @@ def tokenize_tweets(tweet_file):
     lines_read = 0
     tknzr = TweetTokenizer()
     all_tweets = []
-
+    tweet_ids = []
     #read file, tokenize all tweets, append to list
     with open(tweet_file, 'r', encoding='utf8') as f:
         next(f) #skip the header
@@ -45,7 +45,8 @@ def tokenize_tweets(tweet_file):
             ID, tweet, affect, score = line.split("\t")
             words = tknzr.tokenize(tweet)
             all_tweets.append(words)
-    return all_tweets
+            tweet_ids.append(ID)
+    return all_tweets, tweet_ids
 
 
 def get_scores(all_tweets, affect_dict):
@@ -69,11 +70,11 @@ def get_scores(all_tweets, affect_dict):
             preds.append(-1) #if no words were found in the lexicon, append -1
     return preds
 
-def writePreds2File(preds, outputfile):
+def writePreds2File(preds, tweet_ids, outputfile):
     with open(outputfile, 'w') as f:
-        f.write('scores')
-        for val in preds:
-            f.write(str(np.round(val,3))+'\n')
+        f.write('ID\tscores\n')
+        for i in range(len(preds)):
+            f.write(tweet_ids[i] + '\t' + str(np.round(preds[i],3))+'\n')
     f.close()
     pass
 '''
@@ -83,9 +84,9 @@ def main(args):
     print(args.tweet_file)
 
     affect_dict = lexicon2dict(args.lexicon)
-    all_tweets = tokenize_tweets(args.tweet_file)
+    all_tweets, tweet_ids = tokenize_tweets(args.tweet_file)
     preds = get_scores(all_tweets, affect_dict)
-    writePreds2File(preds, args.outputfile)
+    writePreds2File(preds, tweet_ids, args.outputfile)
 
 if __name__ == '__main__':
     args = parser.parse_args()
