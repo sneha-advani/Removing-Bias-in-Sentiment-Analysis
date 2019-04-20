@@ -3,7 +3,8 @@ We have two scripts that we will use to evaluate the performance of our model on
 
 ### Evaluation on "SemEval Affect in Tweets Corpus":
 Use the evaluate_tweets.py script to measure performance of our sentiment analysis model on the original task test set. NOTE: evaluate tweets has a dependency on utils.py, so make sure that file is present in the directory as well. 
-
+This metric is the Pearson Correlation Coefficient - a higher score is better as it indicates that the two 
+sets provided are closer in value. 
 ```
 python evaluate_tweets.py <file-predictions> <file-gold> 
 ```
