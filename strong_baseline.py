@@ -3,10 +3,24 @@ import pprint
 import argparse
 import numpy as np
 from nltk.tokenize import TweetTokenizer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier
 from sklearn.feature_extraction import DictVectorizer
 from simple_baseline import scoresForStrongBaseline
+from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
+from scipy.stats import spearmanr
+from scipy.stats import pearsonr
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
 import string
+from emoint.featurizers.emoint_featurizer import EmoIntFeaturizer
+from emoint.ensembles.blending import blend
+from sklearn.feature_extraction.text import CountVectorizer
+
+
+
 
 pp = pprint.PrettyPrinter()
 parser = argparse.ArgumentParser()
@@ -75,21 +89,54 @@ def getTestfeats(tweet):
     """ This takes the word in question and
     the offset with respect to the instance
     word """
+
+    # untokenized version of the tweet, fed into EmoInt
+    string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
+
+    tokenizer = TweetTokenizer()
+    featurizer = EmoIntFeaturizer()
+
+
+
     features = [
         ('tweet', getCleanTweet(tweet))
         # TODO: add more features here.
     ]
+
+    # append elements given by the emoint to features
+    emoint_count = 0
+    for elmt in featurizer.featurize(string_format, tokenizer):
+        features = features + [('emoint' + str(emoint_count), elmt)]
+
     return dict(features)
 
 def getTrainfeats(tweet, index):
     """ This takes the word in question and
     the offset with respect to the instance
     word """
+
+      
+    # untokenized version of the tweet, fed into EmoInt
+    string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
+
+    tokenizer = TweetTokenizer()
+    featurizer = EmoIntFeaturizer()
+
+    print("index")
+    print(index)
+
+
     features = [
         #('tweet', getCleanTweet(tweet)),
         ('simple_baseline', getSimpleBaselineScore(index))
         # TODO: add more features here.
     ]
+
+    # append elements given by the emoint to features
+    emoint_count = 0
+    for elmt in featurizer.featurize(string_format, tokenizer):
+        features = features + [('emoint' + str(emoint_count), elmt)]
+
     return dict(features)
 
 '''
@@ -98,6 +145,7 @@ Run file with python strong_baseline.py --train_file datasets/EI-reg-En-anger-tr
 
 def main(args):
 
+
     all_tweets,train_labels = tokenize_tweets(args.train_file)
     bias_tweets = tokenize_biasdata(args.bias_data)
 
@@ -105,7 +153,7 @@ def main(args):
     test_feats = []
 
     simple_baseline_preds.extend(scoresForStrongBaseline(all_tweets))
-
+    
     for index, tweet in enumerate(all_tweets):
         feats = getTrainfeats(tweet, index)
         train_feats.append(feats)
@@ -114,15 +162,17 @@ def main(args):
         feats = getTestfeats(tweet)
         test_feats.append(feats)
 
-    #print(train_feats)
 
+    #print(train_feats)
     clf = RandomForestClassifier(n_jobs=2, random_state=0)
 
     vectorizer = DictVectorizer()
+
     X_train = vectorizer.fit_transform(train_feats)
     #print(X_train)
     X_test = vectorizer.transform(test_feats)
     #print(X_test)
+
 
     clf.fit(X_train, train_labels)
 
