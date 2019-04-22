@@ -59,7 +59,7 @@ def main(args):
 
     all_tweets = tokenize_tweets(args.train_file)
     bias_tweets = tokenize_biasdata(args.bias_data)
-    print(bias_tweets)
+    print(all_tweets)
 
 if __name__ == '__main__':
     args = parser.parse_args()
