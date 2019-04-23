@@ -24,6 +24,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 pp = pprint.PrettyPrinter()
 parser = argparse.ArgumentParser()
+tokenizer = TweetTokenizer()
+featurizer = EmoIntFeaturizer()
 
 parser.add_argument('--train_file', type=str, required=True)
 parser.add_argument('--bias_data', type=str, required=True)
@@ -93,11 +95,6 @@ def getTestfeats(tweet):
     # untokenized version of the tweet, fed into EmoInt
     string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
 
-    tokenizer = TweetTokenizer()
-    featurizer = EmoIntFeaturizer()
-
-
-
     features = [
         ('tweet', getCleanTweet(tweet))
         # TODO: add more features here.
@@ -118,13 +115,6 @@ def getTrainfeats(tweet, index):
       
     # untokenized version of the tweet, fed into EmoInt
     string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
-
-    tokenizer = TweetTokenizer()
-    featurizer = EmoIntFeaturizer()
-
-    print("index")
-    print(index)
-
 
     features = [
         #('tweet', getCleanTweet(tweet)),
@@ -153,11 +143,14 @@ def main(args):
     test_feats = []
 
     simple_baseline_preds.extend(scoresForStrongBaseline(all_tweets))
-    
+
+
+    count = 0
     for index, tweet in enumerate(all_tweets):
         feats = getTrainfeats(tweet, index)
         train_feats.append(feats)
 
+    count2 = 0
     for tweet in bias_tweets:
         feats = getTestfeats(tweet)
         test_feats.append(feats)
