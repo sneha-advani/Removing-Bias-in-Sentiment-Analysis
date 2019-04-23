@@ -108,6 +108,7 @@ def getTestfeats(tweet):
     emoint_count = 0
     for elmt in featurizer.featurize(string_format, tokenizer):
         features = features + [('emoint' + str(emoint_count), elmt)]
+        emoint_count += 1
 
     skipthought_count = 0
     average = np.zeros(4800)
@@ -140,6 +141,7 @@ def getTrainfeats(tweet, index):
     emoint_count = 0
     for elmt in featurizer.featurize(string_format, tokenizer):
         features = features + [('emoint' + str(emoint_count), elmt)]
+        emoint_count += 1
 
 
     skipthought_count = 0
