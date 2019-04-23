@@ -7,8 +7,8 @@ from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier
 from sklearn.feature_extraction import DictVectorizer
 from simple_baseline import scoresForStrongBaseline
-from sklearn.cross_validation import train_test_split
-from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from scipy.stats import spearmanr
 from scipy.stats import pearsonr
@@ -18,6 +18,7 @@ import string
 from emoint.featurizers.emoint_featurizer import EmoIntFeaturizer
 from emoint.ensembles.blending import blend
 from sklearn.feature_extraction.text import CountVectorizer
+import skipthoughts
 
 
 
@@ -32,6 +33,9 @@ parser.add_argument('--bias_data', type=str, required=True)
 parser.add_argument('--outputfile', type=str, required=True)
 
 simple_baseline_preds = []
+
+skipthoughts_model = skipthoughts.load_model()
+skipthoughts_encoder = skipthoughts.Encoder(skipthoughts_model)
 
 def tokenize_tweets(tweet_file):
     #tokenize tweets woot
@@ -105,6 +109,16 @@ def getTestfeats(tweet):
     for elmt in featurizer.featurize(string_format, tokenizer):
         features = features + [('emoint' + str(emoint_count), elmt)]
 
+    skipthought_count = 0
+    average = np.zeros(4800)
+    for i in skipthoughts_encoder.encode(tweet):
+        average += i
+        skipthought_count += 1
+    average = average / skipthought_count
+
+    for i in range(4800):
+        features = features + [('skipthought' + str(i), average[i])]
+
     return dict(features)
 
 def getTrainfeats(tweet, index):
@@ -117,7 +131,7 @@ def getTrainfeats(tweet, index):
     string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
 
     features = [
-        #('tweet', getCleanTweet(tweet)),
+        # ('tweet', getCleanTweet(tweet)),
         ('simple_baseline', getSimpleBaselineScore(index))
         # TODO: add more features here.
     ]
@@ -126,6 +140,17 @@ def getTrainfeats(tweet, index):
     emoint_count = 0
     for elmt in featurizer.featurize(string_format, tokenizer):
         features = features + [('emoint' + str(emoint_count), elmt)]
+
+
+    skipthought_count = 0
+    average = np.zeros(4800)
+    for i in skipthoughts_encoder.encode(tweet):
+        average += i
+        skipthought_count += 1
+    average = average / skipthought_count
+
+    for i in range(4800):
+        features = features + [('skipthought' + str(i), average[i])]
 
     return dict(features)
 
