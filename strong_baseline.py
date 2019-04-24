@@ -19,6 +19,7 @@ from emoint.featurizers.emoint_featurizer import EmoIntFeaturizer
 from emoint.ensembles.blending import blend
 from sklearn.feature_extraction.text import CountVectorizer
 import skipthoughts
+from encoder import Model
 
 
 
@@ -27,6 +28,7 @@ pp = pprint.PrettyPrinter()
 parser = argparse.ArgumentParser()
 tokenizer = TweetTokenizer()
 featurizer = EmoIntFeaturizer()
+model = Model()
 
 parser.add_argument('--train_file', type=str, required=True)
 parser.add_argument('--bias_data', type=str, required=True)
@@ -98,7 +100,8 @@ def getTestfeats(tweet):
 
     # untokenized version of the tweet, fed into EmoInt
     string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
-
+    text_features = model.transform([string_format])
+    
     features = [
         ('tweet', getCleanTweet(tweet))
         # TODO: add more features here.
@@ -109,7 +112,12 @@ def getTestfeats(tweet):
     for elmt in featurizer.featurize(string_format, tokenizer):
         features = features + [('emoint' + str(emoint_count), elmt)]
         emoint_count += 1
-
+        
+    sentiment_count = 0
+    for ft in text_features:
+        features = features + [('sentiment' + str(sentiment_count), np.sqrt(ft.dot(ft)))]
+        sentiment_count += 1
+        
     skipthought_count = 0
     average = np.zeros(4800)
     for i in skipthoughts_encoder.encode(tweet):
@@ -130,6 +138,7 @@ def getTrainfeats(tweet, index):
       
     # untokenized version of the tweet, fed into EmoInt
     string_format = ' '.join(tweet).replace(' , ',',').replace(' .','.').replace(' !','!').replace(' ?','?').replace(' : ',': ')
+    text_features = model.transform([string_format])
 
     features = [
         # ('tweet', getCleanTweet(tweet)),
@@ -143,6 +152,10 @@ def getTrainfeats(tweet, index):
         features = features + [('emoint' + str(emoint_count), elmt)]
         emoint_count += 1
 
+    sentiment_count = 0
+    for ft in text_features:
+        features = features + [('sentiment' + str(sentiment_count), np.sqrt(ft.dot(ft)))]
+        sentiment_count += 1
 
     skipthought_count = 0
     average = np.zeros(4800)
