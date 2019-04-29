@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--tweet_file', type=str, required=True)
 parser.add_argument('--lexicon', type=str, required=True)
 parser.add_argument('--outputfile', type=str, required=True)
+parser.add_argument('--just_numbers', type=bool, required=True)
 
 def lexicon2dict(lexicon):
     #convert affect intensity lexicon to dictionary
@@ -74,22 +75,30 @@ def scoresForStrongBaseline(all_tweets):
     preds = get_scores(all_tweets, affect_dict)
     return preds
 
-def writePreds2File(preds, tweet_ids, outputfile):
-    with open(outputfile, 'w') as f:
-        f.write('ID\tscores\n')
-        for i in range(len(preds)):
-            f.write(tweet_ids[i] + '\t' + str(np.round(preds[i],3))+'\n')
-    f.close()
-    pass
+def writePreds2File(preds, tweet_ids, outputfile, justnumbers):
+    if justnumbers:
+        with open(outputfile, 'w') as f:
+            for i in range(len(preds)):
+                f.write(str(np.round(preds[i],3))+'\n')
+        f.close()
+        pass
+    else:
+        with open(outputfile, 'w') as f:
+            f.write('ID\tscores\n')
+            for i in range(len(preds)):
+                f.write(tweet_ids[i] + '\t' + str(np.round(preds[i],3))+'\n')
+        f.close()
+        pass
 '''
-Run file with python base_model.py --tweet_file datasets/EI-reg-En-anger-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile simple_baseline_train.txt
+Run file with 
+python base_model.py --tweet_file datasets/EI-reg-En-anger-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile simple_baseline_train.txt
 '''
 def main(args):
     print(args.tweet_file)
     affect_dict = lexicon2dict(args.lexicon)
     all_tweets, tweet_ids = tokenize_tweets(args.tweet_file)
     preds = get_scores(all_tweets, affect_dict)
-    writePreds2File(preds, tweet_ids, args.outputfile)
+    writePreds2File(preds, tweet_ids, args.outputfile, args.just_numbers)
 
 if __name__ == '__main__':
     args = parser.parse_args()
