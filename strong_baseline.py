@@ -27,11 +27,12 @@ def get_feats(feat_files):
         all_feats.append([np.float(line) for line in open(f, 'r').readlines()])
     return all_feats
 
-def train_model()
+def train_model(X_train, y_train):
+
 
 '''
-Run file with python strong_baseline.py --feature_files feature_outputs/emoint_predictions_train_male.txt feature_out
-puts/emoint_predictions_train_female.txt --outputfile female_predictions.txt
+Run file with python strong_baseline.py --train_feats feature_outputs/emoint_predictions_train.txt feature_out
+puts/emoint_predictions_female.txt --outputfile female_predictions.txt
 
 '''
 
