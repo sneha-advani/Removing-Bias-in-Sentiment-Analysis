@@ -22,10 +22,8 @@ def main(args):
     predictions1 = convertFileToList(args.file1)
     predictions2 = convertFileToList(args.file2)
 
-    statistic, pval = stats.ttest_rel(predictions1, predictions2)
-
-    print("T-Statistic: " + str(statistic))
-    print("P Value: " + str(pval))
+    pearson_corr = stats.pearsonr(predictions1, predictions2)[0]
+    print("Pearson Correlation: " + str(pearson_corr))
 
 if __name__ == '__main__':
     args = parser.parse_args()
