@@ -128,8 +128,8 @@ def getTrainfeats(tweet, index):
 def main(args):
 
     all_tweets,train_labels = tokenize_tweets(args.train_file)
-#     bias_tweets = tokenize_biasdata(bias_data)
-    dev_tweets,dev_labels = tokenize_tweets(args.bias_data)
+    bias_tweets = tokenize_biasdata(bias_data)
+    # dev_tweets,dev_labels = tokenize_tweets(args.bias_data)
   
     train_feats = []
     test_feats = []
@@ -139,14 +139,14 @@ def main(args):
         feats = getTrainfeats(tweet, index)
         train_feats.append(feats)
     
-    for index, tweet in enumerate(dev_tweets):
-        print(tweet)
+    # for index, tweet in enumerate(dev_tweets):
+    #     print(tweet)
+    #     feats = getTestfeats(tweet)
+    #     test_feats.append(feats)
+
+    for tweet in bias_tweets:
         feats = getTestfeats(tweet)
         test_feats.append(feats)
-
-#     for tweet in bias_tweets:
-#         feats = getTestfeats(tweet)
-#         test_feats.append(feats)
 
 
     clf = RandomForestClassifier(n_jobs=2, random_state=0)

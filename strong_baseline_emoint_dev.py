@@ -7,8 +7,8 @@ from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier
 from sklearn.feature_extraction import DictVectorizer
 from simple_baseline import scoresForStrongBaseline
-from sklearn.cross_validation import train_test_split
-from sklearn.cross_validation import KFold, StratifiedKFold
+# from sklearn.cross_validation import train_test_split
+# from sklearn.cross_validation import KFold, StratifiedKFold
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from scipy.stats import spearmanr
 from scipy.stats import pearsonr
