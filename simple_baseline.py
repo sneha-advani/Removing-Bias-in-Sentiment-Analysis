@@ -91,7 +91,7 @@ def writePreds2File(preds, tweet_ids, outputfile, justnumbers):
         pass
 '''
 Run file with 
-python base_model.py --tweet_file datasets/EI-reg-En-anger-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile simple_baseline_train.txt
+python simple_baseline.py --tweet_file final_data_files/tweets-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile final_feature_outputs/simple-train.txt
 '''
 def main(args):
     print(args.tweet_file)

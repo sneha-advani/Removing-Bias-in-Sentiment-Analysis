@@ -78,7 +78,7 @@ def writePreds2File(preds, tweet_ids, outputfile):
     f.close()
     pass
 '''
-Run file with python base_model.py --tweet_file datasets/EI-reg-En-anger-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile simple_baseline_train.txt
+Run file with python simple-baseline.py --tweet_file datasets/EI-reg-En-anger-train.txt --lexicon datasets/NRC-AffectIntensity-Lexicon.txt  --outputfile simple_baseline_train.txt
 '''
 def main(args):
     print(args.tweet_file)
